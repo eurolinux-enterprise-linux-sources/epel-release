@@ -1,24 +1,25 @@
-Name:           epel-release       
+Name:           epel-release
 Version:        6
-Release:        5
+Release:        8
 Summary:        Extra Packages for Enterprise Linux repository configuration
 
-Group:          System Environment/Base 
+Group:          System Environment/Base
 License:        GPLv2
 
 # This is a Red Hat maintained package which is specific to
 # our distribution.  Thus the source is only available from
 # within this srpm.
-URL:            http://download.fedora.redhat.com/pub/epel
-Source0:        http://download.fedora.redhat.com/pub/epel/RPM-GPG-KEY-EPEL-6
-Source1:        GPL	
-Source2:        epel.repo	
-Source3:        epel-testing.repo	
+URL:            http://dl.fedoraproject.org/pub/epel/
+Source0:        http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+Source1:        GPL
+Source2:        epel.repo
+Source3:        epel-testing.repo
+Source4:        macros.ghc-srpm
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:     noarch
-Requires:      redhat-release >=  %{version} 
+Requires:      redhat-release >=  %{version}
 Conflicts:     fedora-release
 
 %description
@@ -45,6 +46,10 @@ install -dm 755 $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d
 install -pm 644 %{SOURCE2} %{SOURCE3}  \
     $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d
 
+# rpm macros for koji
+install -Dpm 644 %{SOURCE4} \
+    $RPM_BUILD_ROOT%{_sysconfdir}/rpm/macros.ghc-srpm
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -55,7 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 #echo "yum epel http://download.fedora.redhat.com/pub/epel/%{version}/\$ARCH" \
 #    >> %{_sysconfdir}/sysconfig/rhn/sources
 
-%postun 
+%postun
 #sed -i '/^yum\ epel/d' %{_sysconfdir}/sysconfig/rhn/sources
 #sed -i '/^\#\ epel\ repo\ /d' %{_sysconfdir}/sysconfig/rhn/sources
 
@@ -65,9 +70,19 @@ rm -rf $RPM_BUILD_ROOT
 %doc GPL
 %config(noreplace) /etc/yum.repos.d/*
 /etc/pki/rpm-gpg/*
+/etc/rpm/macros.ghc-srpm
 
 
 %changelog
+* Sun Nov 04 2012 <stahnma@fedoraproject.org> - 6-8
+- Fix URL bz #870686
+
+* Wed May  9 2012 Jens Petersen <petersen@redhat.com> - 6-7
+- add ppc64 to ghc_arches
+
+* Tue Jan 10 2012 Jens Petersen <petersen@redhat.com> - 6-6
+- add /etc/rpm/macros.ghc-srpm from fedora redhat-rpm-macros
+
 * Tue Oct 12 2010 Michael Stahnke <stahnma@fedoraproject.org> - 6-5
 - Fix bug #627611
 
@@ -78,7 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 - use metalink urls not mirrorlist ones
 
 * Tue Apr 27 2010 Dennis Gilmore <dennis@ausil.us> - 6-1
-- setup for EL-6 
+- setup for EL-6
 - new key
 
 * Tue Feb 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 6-2
@@ -100,7 +115,7 @@ rm -rf $RPM_BUILD_ROOT
 - Changed description
 
 * Mon Mar 14 2007 Michael Stahnke <mastahnke@gmail.com> - 4-2
-- Fixed up2date issues. 
+- Fixed up2date issues.
 
 * Mon Mar 12 2007 Michael Stahnke <mastahnke@gmail.com> - 4-1
 - Initial Package
